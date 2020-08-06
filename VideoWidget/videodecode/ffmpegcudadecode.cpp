@@ -26,6 +26,7 @@ FFmpegCudaDecode::~FFmpegCudaDecode()
         av_free(buffer_);
         buffer_ = nullptr;
     }
+    qDebug() << "FFmpegCudaDecode::~FFmpegCudaDecode()";
 }
 
 void FFmpegCudaDecode::decode(const QString &url)
@@ -202,10 +203,10 @@ END:
 
 void FFmpegCudaDecode::destroy()
 {
-//    if(render_){
-//        delete render_;
-//        render_ = nullptr;
-//    }
+    if(render_){
+        delete render_;
+        render_ = nullptr;
+    }
 }
 
 int FFmpegCudaDecode::decode_packet(AVCodecContext *pCodecCtx, AVPacket *packet, AVFrame *pFrame, AVFrame *swFrame)

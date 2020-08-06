@@ -78,9 +78,9 @@ void VideoWidget::slotStop()
 
 void VideoWidget::resizeGL(int w, int h)
 {
-//    m_thread->lockRenderer();
+    m_thread->lockRenderer();
     context()->functions()->glViewport(0, 0, w, h);
-//    m_thread->unlockRenderer();
+    m_thread->unlockRenderer();
 }
 
 void VideoWidget::slotGrabContext()

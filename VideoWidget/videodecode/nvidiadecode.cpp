@@ -11,6 +11,7 @@ extern "C"
 #include "libavformat/avformat.h"
 }
 #include <QDateTime>
+#include <QDebug>
 #include "../renderthread.h"
 #include "nvidiadecode.h"
 
@@ -24,8 +25,9 @@ NvidiaDecode::NvidiaDecode(DecodeTaskManagerImpl *taskManger, CreateDecoderFunc 
 
 NvidiaDecode::~NvidiaDecode()
 {
+    qDebug() << "NvidiaDecode::~NvidiaDecode()";
 }
-#include <QDebug>
+
 extern CreateDecoderFunc g_gpurender_fuc_;
 void NvidiaDecode::decode(const QString &url)
 {
@@ -83,8 +85,8 @@ void NvidiaDecode::decode(const QString &url)
 
 void NvidiaDecode::destroy()
 {
-//    if(render_){
-//        delete render_;
-//        render_ = nullptr;
-//    }
+    if(render_){
+        delete render_;
+        render_ = nullptr;
+    }
 }

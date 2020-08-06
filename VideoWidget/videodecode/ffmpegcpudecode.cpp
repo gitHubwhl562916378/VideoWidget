@@ -9,6 +9,7 @@
 #include "libavutil/imgutils.h"
 }
 #include <QDateTime>
+#include <QDebug>
 #include "../renderthread.h"
 #include "ffmpegcpudecode.h"
 
@@ -26,6 +27,7 @@ FFmpegCpuDecode::~FFmpegCpuDecode()
         av_free(buffer_);
         buffer_ = nullptr;
     }
+    qDebug() << "FFmpegCpuDecode::~FFmpegCpuDecode()";
 }
 
 void FFmpegCpuDecode::decode(const QString &url)

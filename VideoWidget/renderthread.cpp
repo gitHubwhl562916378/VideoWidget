@@ -112,9 +112,7 @@ void RenderThread::setDevice(QString d)
 
 void RenderThread::run()
 {
-    if(!m_task_){
-        m_task_ = std::shared_ptr<DecodeTask>(DecodeTaskManager::Instance()->makeTask(this, device_));
-    }
+    m_task_ = std::shared_ptr<DecodeTask>(DecodeTaskManager::Instance()->makeTask(this, device_));
     m_task_->decode(file_name_);
 }
 
