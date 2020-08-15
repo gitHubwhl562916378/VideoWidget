@@ -12,7 +12,7 @@ Widget::Widget(QWidget *parent)
 {
     video_wid_ = new VideoWidget;
     ptn_ = new QPushButton(tr("播放"));
-    edit_ = new QLineEdit("rtsp://192.168.2.66/person.avi");
+    edit_ = new QLineEdit("test.mp4");
     device_combox_ = new QComboBox;
     device_combox_->addItems(QStringList() << tr("cpu") << tr("cuda") << tr("cuda_plugin") << tr("qsv"));
 

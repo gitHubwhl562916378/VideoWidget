@@ -15,13 +15,13 @@ public:
     };
     VideoWidget(QWidget *parent = nullptr);
     ~VideoWidget() override;
-    bool isFrameSwapped() const;
     QString url() const;
     QString deviceName() const;
     PlayState state() const;
 
 public slots:
     void slotPlay(QString filename, QString device);
+    void slotStop();
 
 signals:
     void sigRequestRender();
@@ -33,23 +33,15 @@ signals:
     void sigCurFpsChanged(int);
 
 protected:
-    void paintEvent(QPaintEvent *) override { }
+    void initializeGL() override;
     void resizeGL(int w, int h) override;
+    void paintGL() override;
 
 private slots:
-    void slotGrabContext();
-    void slotAboutToCompose();
-    void slotFrameSwapped();
-    void slotAboutToResize();
-    void slotResized();
-
     void slotFinished();
 
 private:
-    void stopRender();
-
     RenderThread *m_thread;
-    std::atomic_bool isFrameSwapped_;
     QString source_file_, device_name_;
     PlayState m_state_;
 };

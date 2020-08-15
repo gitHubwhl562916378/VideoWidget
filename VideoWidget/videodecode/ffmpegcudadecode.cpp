@@ -149,12 +149,6 @@ void FFmpegCudaDecode::decode(const QString &url)
     {
         if ((ret = av_read_frame(pFormatCtx, &packet)) < 0)
         {
-            if(ret != AVERROR_EOF)
-            {
-                av_strerror(ret, errorbuf, sizeof(errorbuf));
-                errorMsg = errorbuf;
-                thread()->sigError(errorMsg);
-            }
             break; //这里认为视频读取完了
         }
 
@@ -179,7 +173,7 @@ void FFmpegCudaDecode::decode(const QString &url)
     }
     packet.data = nullptr;
     packet.size = 0;
-//    ret = decode_packet(pCodecCtx, &packet, pFrame, swFrame);
+    ret = decode_packet(pCodecCtx, &packet, pFrame, swFrame);
 
 END:
     if(pFrame)
@@ -198,14 +192,18 @@ END:
     {
         avformat_close_input(&pFormatCtx);
     }
-    thread()->sigCurFpsChanged(0);
-}
 
-void FFmpegCudaDecode::destroy()
-{
-    if(render_){
-        delete render_;
-        render_ = nullptr;
+    thread()->Render([&](){
+        if(render_){
+            delete render_;
+            render_ = nullptr;
+        }
+    });
+    thread()->sigCurFpsChanged(0);
+    if(!thread()->isInterruptionRequested()){
+        if(url.left(4) == "rtsp"){
+            thread()->sigError("AVERROR_EOF");
+        }
     }
 }
 
@@ -241,8 +239,9 @@ int FFmpegCudaDecode::decode_packet(AVCodecContext *pCodecCtx, AVPacket *packet,
                 thread()->setExtraData(nullptr);
                 render_ = thread()->getRender(pFrame->format);
                 render_->initialize(pFrame->width, pFrame->height);
+                thread()->sigVideoStarted(pFrame->width, pFrame->height);
             }
-            render_->render(pFrame->data, pFrame->linesize, pFrame->width, pFrame->height);
+            render_->upLoad(pFrame->data, pFrame->linesize, pFrame->width, pFrame->height);
         });
 #else
         //gpu拷贝到cpu，相对耗时
@@ -288,7 +287,7 @@ int FFmpegCudaDecode::decode_packet(AVCodecContext *pCodecCtx, AVPacket *packet,
                 render_ = thread()->getRender(swFrame->format);
                 render_->initialize(swFrame->width, swFrame->height);
             }
-            render_->render(buffer_, swFrame->width, swFrame->height);
+            render_->upLoad(buffer_, swFrame->width, swFrame->height);
         });
 #endif
 

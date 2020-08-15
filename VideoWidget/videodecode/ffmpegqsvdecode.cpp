@@ -139,12 +139,6 @@ void FFmpegQsvDecode::decode(const QString &url)
     {
         if ((ret = av_read_frame(pFormatCtx, &packet)) < 0)
         {
-            if(ret != AVERROR_EOF)
-            {
-                av_strerror(ret, errorbuf, sizeof(errorbuf));
-                errorMsg = errorbuf;
-                thread()->sigError(errorMsg);
-            }
             break; //这里认为视频读取完了
         }
 
@@ -188,14 +182,18 @@ END:
     {
         avformat_close_input(&pFormatCtx);
     }
-    thread()->sigCurFpsChanged(0);
-}
 
-void FFmpegQsvDecode::destroy()
-{
-    if(render_){
-        delete render_;
-        render_ = nullptr;
+    thread()->Render([&](){
+        if(render_){
+            delete render_;
+            render_ = nullptr;
+        }
+    });
+    thread()->sigCurFpsChanged(0);
+    if(!thread()->isInterruptionRequested()){
+        if(url.left(4) == "rtsp"){
+            thread()->sigError("AVERROR_EOF");
+        }
     }
 }
 
@@ -267,8 +265,9 @@ int FFmpegQsvDecode::decode_packet(AVCodecContext *decoder_ctx, AVFrame *frame, 
             {
                 render_ = thread()->getRender(sw_frame->format);
                 render_->initialize(sw_frame->width, sw_frame->height);
+                thread()->sigVideoStarted(sw_frame->width, sw_frame->height);
             }
-            render_->render(buffer_, sw_frame->width, sw_frame->height);
+            render_->upLoad(buffer_, sw_frame->width, sw_frame->height);
         });
 
     fail:
