@@ -1,21 +1,23 @@
-#include <QApplication>
-#include <QSurfaceFormat>
-#include <QDebug>
-#include "widget.h"
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include "VideoWidget/videoitem.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-//    QSurfaceFormat format;
-//    format.setDepthBufferSize(24);
-//    format.setStencilBufferSize(8);
-//    format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
-//    QSurfaceFormat::setDefaultFormat(format);
+    QGuiApplication app(argc, argv);
 
-    Widget w;
-    w.resize(600,400);
-    w.show();
+    qmlRegisterType<VideoItem>("SceneGraphRendering", 1, 0, "VideoItem");
 
-    return a.exec();
+    QQmlApplicationEngine engine;
+    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [url](QObject *obj, const QUrl &objUrl) {
+        if (!obj && url == objUrl)
+            QCoreApplication::exit(-1);
+    }, Qt::QueuedConnection);
+    engine.load(url);
+
+    return app.exec();
 }
