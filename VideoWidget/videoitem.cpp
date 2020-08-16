@@ -63,6 +63,16 @@ QQuickFramebufferObject::Renderer *VideoItem::createRenderer() const
     return new VideoFboRenderer;
 }
 
+QString VideoItem::deviceName()
+{
+    return device_name_;
+}
+
+QString VideoItem::url()
+{
+    return source_file_;
+}
+
 void VideoItem::slotInitisze()
 {
     auto render_surface = new QOffscreenSurface(nullptr, this);

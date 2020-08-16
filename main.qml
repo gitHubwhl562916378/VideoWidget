@@ -27,7 +27,7 @@ ApplicationWindow{
 
         ComboBox{
             id: combox
-            width: 90
+            width: 120
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.right: button.left

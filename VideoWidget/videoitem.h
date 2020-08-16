@@ -26,6 +26,8 @@ signals:
     void sigInitized();
 
 public slots:
+    QString deviceName();
+    QString url();
     void slotInitisze();
     void slotStop();
     void slotPlay(QString filename, QString device);
