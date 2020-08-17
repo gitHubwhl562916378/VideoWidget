@@ -38,6 +38,7 @@ RenderThread::RenderThread(QSurface *surface, QOpenGLContext *ctx, QObject *pare
 
 RenderThread::~RenderThread()
 {
+    context_->makeCurrent(surface_);
     context_->doneCurrent();
     context_->deleteLater();
 }
