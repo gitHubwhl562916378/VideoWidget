@@ -2,6 +2,7 @@
 #include <QOpenGLContext>
 #include <QOffscreenSurface>
 #include <QQuickWindow>
+#include <QOpenGLFunctions>
 #include <QGuiApplication>
 #include "videoitem.h"
 #include "renderthread.h"
@@ -21,6 +22,8 @@ public:
     {
         QMutexLocker lock(m_obj_->render_thr_->renderLocker());
          if(!m_obj_->render_thr_->currentRender()){
+             QOpenGLContext::currentContext()->functions()->glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+             QOpenGLContext::currentContext()->functions()->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
              return;
          }
         m_obj_->render_thr_->currentRender()->draw();

@@ -79,13 +79,10 @@ void FFmpegQsvDecode::decode(const QString &url)
     }
 
     int vden = video_st->avg_frame_rate.den,vnum = video_st->avg_frame_rate.num;
-    if(vden <= 0)
+    if(vden > 0)
     {
-        errorMsg = "get fps failed";
-        thread()->sigError(errorMsg);
-        goto  END;
+        thread()->sigFps(vnum/vden);
     }
-    thread()->sigFps(vnum/vden);
 
     if ((ret = taskManager_->hwDecoderInit(AV_HWDEVICE_TYPE_QSV)) < 0)
     {
@@ -122,6 +119,13 @@ void FFmpegQsvDecode::decode(const QString &url)
         pCodecCtx->extradata_size = video_st->codecpar->extradata_size;
     }
     pCodecCtx->get_format = get_qsv_hw_format;
+
+    if(pCodecCtx->pix_fmt < 0)
+    {
+        errorMsg = "unknow pixformat";
+        thread()->sigError(errorMsg);
+        goto  END;
+    }
 
     ///打开解码器
     if ((ret = avcodec_open2(pCodecCtx, nullptr, nullptr)) < 0) {
@@ -165,6 +169,12 @@ void FFmpegQsvDecode::decode(const QString &url)
     packet.size = 0;
 //    ret = decode_packet(pCodecCtx, pFrame, swFrame, &packet);
 
+    thread()->sigCurFpsChanged(0);
+    if(!thread()->isInterruptionRequested()){
+        if(url.left(4) == "rtsp"){
+            thread()->sigError("AVERROR_EOF");
+        }
+    }
 END:
     if(pFrame)
     {
@@ -181,13 +191,6 @@ END:
     if(pFormatCtx)
     {
         avformat_close_input(&pFormatCtx);
-    }
-
-    thread()->sigCurFpsChanged(0);
-    if(!thread()->isInterruptionRequested()){
-        if(url.left(4) == "rtsp"){
-            thread()->sigError("AVERROR_EOF");
-        }
     }
 }
 
