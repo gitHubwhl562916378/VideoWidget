@@ -45,6 +45,7 @@ ApplicationWindow{
             text: qsTr('播放')
             onClicked: {
                 if(edit.text != ""){
+                    errorText.text = qsTr("请稍等")
                     video.slotPlay(edit.text, combox.currentText)
                 }
             }
@@ -60,6 +61,16 @@ ApplicationWindow{
         mirrorVertically: true
         onSigError: {
             console.log(msg)
+            errorText.text = msg
+        }
+        onSigVideoStarted: {
+            errorText.text = ""
+        }
+
+        Text {
+            id: errorText
+            anchors.centerIn: parent
+            color: "red"
         }
     }
 }
