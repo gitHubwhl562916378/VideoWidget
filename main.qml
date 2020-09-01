@@ -58,5 +58,8 @@ ApplicationWindow{
         anchors.right: top.right
         anchors.bottom: parent.bottom
         mirrorVertically: true
+        onSigError: {
+            console.log(msg)
+        }
     }
 }
