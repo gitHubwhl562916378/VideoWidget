@@ -42,6 +42,7 @@ RenderThread::RenderThread(QObject *parent):
 {
     if(!isInited_.load()){
         renderFactoryInstance()->Register(AV_PIX_FMT_YUV420P, []()->VideoRender*{return new YuvRender;});
+        renderFactoryInstance()->Register(AV_PIX_FMT_YUVJ420P, []()->VideoRender*{return new YuvRender;});
         renderFactoryInstance()->Register(AV_PIX_FMT_NV12, []()->VideoRender*{return new Nv12Render;});
         CreateRenderFunc func = nullptr;
         QLibrary dllLoad("Nv12Render_Gpu"); //Nv2RGBRender_Gpu Nv12Render_Gpu
