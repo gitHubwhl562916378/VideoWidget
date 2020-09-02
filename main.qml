@@ -21,6 +21,7 @@ ApplicationWindow{
             anchors.top: parent.top
             anchors.right: combox.left
             anchors.bottom: parent.bottom
+            selectByMouse: true
             anchors.margins: 5
             placeholderText: qsTr('请输入视频地址')
         }
