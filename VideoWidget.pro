@@ -20,11 +20,11 @@ SOURCES += \
 RESOURCES += qml.qrc \
     qml.qrc
 
-INCLUDEPATH += D:/ffmpeg/x64/include \
+INCLUDEPATH += E:/ffmpeg/x64/include \
                $$(INTELMEDIASDKROOT)/include
 
-LIBS += -LD:/ffmpeg/x64/lib \
-        avcodec.lib avdevice.lib avfilter.lib avformat.lib avutil.lib postproc.lib swresample.lib swscale.lib
+LIBS += -LE:/ffmpeg/x64/lib \
+        avcodec.lib avdevice.lib avfilter.lib avformat.lib avutil.lib postproc.lib swresample.lib swscale.lib ws2_32.lib Dbghelp.lib
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
